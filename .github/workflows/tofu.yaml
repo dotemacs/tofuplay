@@ -21,6 +21,7 @@ jobs:
           ./tofu init -backend-config="password=$(echo $TFSTATE)"
           ./tofu plan
           ./tofu apply -auto-approve
+          ls
       - name: Run tmate if failure
         if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
