@@ -10,27 +10,25 @@ jobs:
     env:
       VERSION: "v1.7.0-alpha1"
       RELEASE: "tofu_1.7.0-alpha1_linux_amd64.tar.gz"
+      PASSPHRASE: ${{secrets.encryptionPassphrase}}
     steps:
       - uses: actions/checkout@v3.3.0
       - name: Set the TF_ENCRYPTION env var, since it's multiline & uses a secret
         run: |
-          echo 'TF_ENCRYPTION=<<EOF' >> $GITHUB_ENV
-          echo -n 'terraform {
-            backend "local" {}
+        TF_ENCRYPTION=$(echo "terraform {
+            backend \"local\" {}
             encryption {
-              key_provider "pbkdf2" "my_passphrase" {
-                passphrase = ' >> $GITHUB_ENV
-          echo ${{secrets.encryptionPassphrase}} >> $GITHUB_ENV
-          echo '}
-              method "aes_gcm" "my_method" {
+              key_provider \"pbkdf2\" \"my_passphrase\" {
+                passphrase = ${{ env.PASSPHRASE }}
+              }
+              method \"aes_gcm\" \"my_method\" {
                 keys = key_provider.pbkdf2.my_passphrase
               }
               state {
                 method = method.aes_gcm.my_method
               }
             }
-          }' >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          }")
       - run: |
           curl -OL https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
           tar zxvf ${RELEASE}
