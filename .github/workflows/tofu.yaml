@@ -12,7 +12,6 @@ jobs:
       RELEASE: "tofu_1.7.0-alpha1_linux_amd64.tar.gz"
       PASSPHRASE: ${{secrets.encryptionPassphrase}}
       TF_ENCRYPTION: |
-        <<EOF
           terraform {
             backend "local" {}
             encryption {
@@ -27,7 +26,6 @@ jobs:
               }
             }
           }
-        EOF
     steps:
       - uses: actions/checkout@v3.3.0
       - run: |
