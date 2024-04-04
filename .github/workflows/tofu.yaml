@@ -32,7 +32,7 @@ jobs:
           curl -OL https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
           tar zxvf ${RELEASE}
       - run: |
-          cp "${{ github.action_path }}/main.tf" main.tf
+          ls -l
           ./tofu init
           ./tofu plan
           ./tofu apply -auto-approve
