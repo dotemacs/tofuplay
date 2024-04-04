@@ -1,0 +1,41 @@
+name: tofu
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push
+  push: push
+
+jobs:
+  tofu-run:
+    name: Setup OpenTofu
+    runs-on: ubuntu-latest
+    env:
+        VERSION: "v1.7.0-alpha1"
+        RELEASE: "tofu_1.7.0-alpha1_linux_amd64.tar.gz"
+        PASSPHRASE: ${{secrets.encryptionPassphrase}}
+    steps:
+      - run: |
+          curl https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
+          tar zxvf ${RELEASE}
+      - run: |
+          read -d '' TF_ENCRYPTION << EOF
+          terraform {
+            backend "local" {}
+            encryption {
+              key_provider "pbkdf2" "my_passphrase" {
+                passphrase = "${PASSPHRASE}"
+              }
+              method "aes_gcm" "my_method" {
+                keys = key_provider.pbkdf2.my_passphrase
+              }
+              state {
+                method = method.aes_gcm.my_method
+                fallback{} # Remove after the migration is complete.
+              }
+            }
+          }
+          EOF
+          ./tofu init
+          ./tofu plan
+          ./tofu apply -auto-approve
+          cat terraform.tfstate
