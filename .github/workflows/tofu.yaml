@@ -14,12 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
       - run: |
-          read -d '' TF_ENCRYPTION << EOF
+          TF_ENCRYPTION=`cat <<EOF
           terraform {
             backend "local" {}
             encryption {
               key_provider "pbkdf2" "my_passphrase" {
-                passphrase = "${PASSPHRASE}"
+                passphrase = $PASSPHRASE
               }
               method "aes_gcm" "my_method" {
                 keys = key_provider.pbkdf2.my_passphrase
@@ -29,7 +29,7 @@ jobs:
               }
             }
           }
-          EOF
+          EOF`
       - run: |
           curl -OL https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
           tar zxvf ${RELEASE}
