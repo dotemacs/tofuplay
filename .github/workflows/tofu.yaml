@@ -2,11 +2,22 @@ name: tofu
 
 # Controls when the action will run.
 on: [push]
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
 
 jobs:
   tofu-run:
     name: Setup OpenTofu
     runs-on: ubuntu-latest
+    uses: mxschmitt/action-tmate@v3
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      with:
+        limit-access-to-actor: true
     env:
       VERSION: "v1.7.0-alpha1"
       RELEASE: "tofu_1.7.0-alpha1_linux_amd64.tar.gz"
