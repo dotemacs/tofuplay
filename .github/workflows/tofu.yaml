@@ -21,7 +21,6 @@ jobs:
           ./tofu init -backend-config="password=$(echo $TFSTATE)"
           ./tofu plan
           ./tofu apply -auto-approve
-          cat terraform.tfstate
       - name: Run tmate if failure
         if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
