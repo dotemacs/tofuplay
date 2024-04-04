@@ -11,30 +11,14 @@ jobs:
       VERSION: "v1.7.0-alpha1"
       RELEASE: "tofu_1.7.0-alpha1_linux_amd64.tar.gz"
       PASSPHRASE: ${{secrets.encryptionPassphrase}}
+      TFSTATE: ${{secrets.TFSTATE}}
     steps:
       - uses: actions/checkout@v3.3.0
       - run: |
           curl -OL https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
           tar zxvf ${RELEASE}
-      - run: |
-          TF_ENCRYPTION=$(echo "terraform {
-            backend \"local\" {}
-            encryption {
-              key_provider \"pbkdf2\" \"my_passphrase\" {
-                passphrase = ${{ env.PASSPHRASE }}
-              }
-              method \"aes_gcm\" \"my_method\" {
-                keys = key_provider.pbkdf2.my_passphrase
-              }
-              state {
-                method = method.aes_gcm.my_method
-              }
-              plan {
-                method = method.aes_gcm.my_method
-              }
-            }
-          }")
-          ./tofu init
+       - run: |
+          ./tofu init -backend-config="password=$(echo $TFSTATE)"
           ./tofu plan
           ./tofu apply -auto-approve
           cat terraform.tfstate
