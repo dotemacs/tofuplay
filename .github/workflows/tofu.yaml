@@ -5,7 +5,7 @@ on: [push]
 
 jobs:
   tofu-run:
-    name: Setup OpenTofu
+    name: Run OpenTofu
     runs-on: ubuntu-latest
     env:
       VERSION: "v1.7.0-alpha1"
