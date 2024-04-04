@@ -1,9 +1,7 @@
 name: tofu
 
 # Controls when the action will run.
-on:
-  # Triggers the workflow on push
-  push: push
+on: [push]
 
 jobs:
   tofu-run:
