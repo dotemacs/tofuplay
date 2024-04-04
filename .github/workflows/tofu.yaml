@@ -29,6 +29,9 @@ jobs:
               state {
                 method = method.aes_gcm.my_method
               }
+              plan {
+                method = method.aes_gcm.my_method
+              }
             }
           }")
           ./tofu init
