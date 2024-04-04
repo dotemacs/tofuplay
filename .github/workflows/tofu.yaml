@@ -13,7 +13,7 @@ jobs:
         PASSPHRASE: ${{secrets.encryptionPassphrase}}
     steps:
       - run: |
-          curl https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
+          curl -OL https://github.com/opentofu/opentofu/releases/download/${VERSION}/${RELEASE}
           tar zxvf ${RELEASE}
       - run: |
           read -d '' TF_ENCRYPTION << EOF
